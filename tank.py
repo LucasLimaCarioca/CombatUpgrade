@@ -1,22 +1,42 @@
 import pygame
+import math
+
+
+def sprite(images, which, zoom, color):
+    image = images[which]
+    resize_img = pygame.transform.scale(image, (image.get_width() * zoom, image.get_height() * zoom))
+    colored_image = pygame.Surface(resize_img.get_size())
+    colored_image.fill(color)
+    final_img = resize_img.copy()
+    final_img.blit(colored_image, (0, 0), special_flags=pygame.BLEND_MULT)
+    return final_img
 
 
 class Tank:
 
-    def __init__(self):
-        self.position = None
-        self.colors = [pygame.Color(255, 255, 255), pygame.Color(255, 0, 0),
-                       pygame.Color(0, 255, 0), pygame.Color(0, 0, 255)]
-        self.image = pygame.image.load("sprites/sprite1.png").convert_alpha()
-        self.zoom = 5
-        self.resize_img = pygame.transform.scale(self.image, (self.image.get_width() * self.zoom
-                                                              , self.image.get_height() * self.zoom,))
-        self.final_image = None
+    def __init__(self, zoom, spawn, speed, color):
+        self.position = spawn
+        self.color = color
+        self.images = []
+        for i in range(5):
+            self.images.append(pygame.image.load("sprites/sprite" + str(i + 1) + ".png").convert_alpha())
 
-    def choose_tank(self, player, screen):
-        colored_image = pygame.Surface(self.resize_img.get_size())
-        colored_image.fill(self.colors[player])
-        final_image = self.resize_img.copy()
-        final_image.blit(colored_image, (0, 0), special_flags=pygame.BLEND_MULT)
-        self.final_image = final_image
+        self.final_image = sprite(self.images,0, zoom, color)
+        self.rect = self.final_image.get_rect()
+        self.rect.update(spawn, (self.rect.x, self.rect.y))
+        self.angle = 0
+        self.speed = speed
 
+    def action(self, screen, command):
+        if command == 1:
+            self.angle -= 2
+        elif command == 2:
+            self.angle += 2
+        elif command == 3:
+            self.rect.move_ip(math.cos(math.radians(self.angle)) * self.speed,
+                              math.sin(math.radians(self.angle)) * self.speed)
+
+        if self.angle == 360:
+            self.angle = 0
+
+        screen.blit(self.final_image, (self.rect.x, self.rect.y))
