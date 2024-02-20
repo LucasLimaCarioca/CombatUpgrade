@@ -30,9 +30,8 @@ class Maze:
 
     def build(self, screen):
 
-
         # draw main walls
         for wall in self.walls:
             pygame.draw.rect(screen, self.WHITE, wall)
 
-        pygame.display.flip()
+

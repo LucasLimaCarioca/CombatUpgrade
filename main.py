@@ -37,5 +37,4 @@ while True:
     maze.build(screen)
     tank.choose_tank(1, screen)
 
-
     pygame.display.flip()
